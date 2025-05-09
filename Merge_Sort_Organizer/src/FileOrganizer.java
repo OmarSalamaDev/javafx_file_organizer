@@ -33,17 +33,20 @@ public class FileOrganizer {
 
     private void processDirectoryRecursive(Path dir, OrganizerSettings settings) throws IOException {
         try (Stream<Path> paths = Files.list(dir)) {
-            paths.filter(Files::isDirectory)
-                    .forEach(subDir -> {
-                        try {
-                            processDirectoryRecursive(subDir, settings);
-                        } catch (IOException e) {
-                            System.err.println("Error processing directory: " + subDir);
-                        }
-                    });
+            List<Path> subDirs = paths.filter(Files::isDirectory).toList();
+
+            for (Path subDir : subDirs) {
+                try {
+                    processDirectoryRecursive(subDir, settings);
+                } catch (IOException e) {
+                    System.err.println("Error processing directory: " + subDir);
+                }
+            }
         }
+
         processDirectory(dir, settings);
     }
+
 
     private void processDirectory(Path dir, OrganizerSettings settings) throws IOException {
         List<Path> files = getFilesInDirectory(dir);

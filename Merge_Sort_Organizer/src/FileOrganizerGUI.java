@@ -112,7 +112,6 @@ public class FileOrganizerGUI extends Application {
     }
 
     private void organizeFiles() {
-        String path = directoryField.getText();
         String criteria = criteriaComboBox.getValue();
         boolean createSubfolders = subfoldersCheckBox.isSelected();
         boolean recursive = recursiveCheckBox.isSelected();
@@ -127,8 +126,16 @@ public class FileOrganizerGUI extends Application {
     private void loadFilesAfterOrganization() {
         String path = directoryField.getText();
 
+        String criteria = criteriaComboBox.getValue();
+        SortStrategyFactory strategyFactory = new SortStrategyFactory();
+        SortStrategy sortStrategy = strategyFactory.create(criteria);
+
+
         try {
-            List<Path> files = organizer.getFilesInDirectory(Paths.get(path));
+            List<Path> files_before = organizer.getFilesInDirectory(Paths.get(path));
+
+            List<Path> files = sortStrategy.sort(files_before);
+
             StringBuilder sb = new StringBuilder();
             for (Path file : files) {
                 sb.append(file.getFileName()).append("\n");
